@@ -11,7 +11,13 @@ app.use(express.static(__dirname + '/public'));
 var io = socketio.listen(app);
 
 app.get('/', function(req, res, next) {
-  client.incr('hits');
+  client.incr('hits', function(err, count) {
+    io.sockets.emit('hit', count);
+  });
+  
   next();
 });
+
+io.sockets.on('connection');
+
 app.listen(1337, "0.0.0.0");

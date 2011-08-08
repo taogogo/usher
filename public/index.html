@@ -2,10 +2,36 @@
 <html lang="en">
 <head>
   <title>Test</title>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-test
+<div>status: <span id="status">offline</span></div>
+<div>hits: <span id="hits"></span></div>
+<div id="raw" style="margin-top: 30px;"></div>
+
+<script>
+var elStatus = document.getElementById('status');
+var elHits = document.getElementById('hits');
+var elRaw = document.getElementById('raw');
+
+var connected = false;
+
+var usher = io.connect('http://'+location.host);
+usher.on('connect', function() {
+  connected = true;
+  elStatus.innerText = 'online';
+});
+
+usher.on('disconnect', function() {
+  connected = false;
+  elStatus.innerText = 'offline';
+});
+
+usher.on('hit', function(count) {
+  elHits.innerText = count;
+});
+</script>
 
 </body>
 </html>
