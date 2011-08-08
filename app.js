@@ -1,14 +1,17 @@
 var redis = require('redis');
-var http = require('http');
+var express = require('express');
+var socketio = require('socket.io');
 
-
+var app = express.createServer();
 var client = redis.createClient();
 
-http.createServer(function (req, res) {
-  client.incr('hits');
+app.use(app.router);
+app.use(express.static(__dirname + '/public'));
 
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  client.get('hits', function(err, val) {
-    res.end(val);  
-  });
-}).listen(1337, "0.0.0.0");
+var io = socketio.listen(app);
+
+app.get('/', function(req, res, next) {
+  client.incr('hits');
+  next();
+});
+app.listen(1337, "0.0.0.0");
